@@ -2,3 +2,5 @@
 /props.csv
 .DS_Store
 .idea/*
+__pycache__
+comb.py

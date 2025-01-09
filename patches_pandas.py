@@ -50,8 +50,8 @@ class App:
             patch_file_properties[patch_file.name] = pd.Series(file_parameters.properties)
         # Put it all in a DF for processing
         self.df = pd.DataFrame(patch_file_properties)
-        self.df.sort_index()
-        self.dump()
+        self.df.sort_index(axis=1, inplace=True)
+        self.dump_changed()
         # Dump to CSV
         # Sort the columns by file name, including the "default"
         # self.df.sort_index(axis=1, inplace=True)
@@ -60,9 +60,16 @@ class App:
 
     def dump(self):
         for name, parameters in self.df.items():
-            print(f"----------------- {name} ---------------")
+            print(f"\n----------------- {name} ---------------")
             for p, v in parameters.items():
                 print(p, v["DISPLAY_VALUE"])
+
+    def dump_changed(self):
+        for name, parameters in self.df.items():
+            print(f"\n----------------- {name} ---------------")
+            for p, v in parameters.items():
+                if v["CHANGED"]:
+                 print(p, v["DISPLAY_VALUE"])
 
     def cleanup(self):
         print(f"Cleaning up {self.args.app_name}.")

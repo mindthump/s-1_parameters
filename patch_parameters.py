@@ -52,7 +52,7 @@ class PatchParameters:
                 display_value = prop_value
             case "DICT":
                 try:
-                    display_value = self.param_definitions[prop_key]["VALUES"][
+                    display_value = prop_def["VALUES"][
                         prop_value
                     ]
                 except:
