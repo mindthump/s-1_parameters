@@ -9,13 +9,14 @@ import argparse
 import logging
 from pathlib import Path
 import pandas as pd
+from patch_parameters import PatchParameters
 
 
 class App:
     def __init__(self, app_args):
         self.args = app_args
         self.patch_dir = "/Users/ed/Music/s1_patch_analysis"
-        self.patch_files = []
+        self.patch_files: list[Path] = []
         self.df = None  # Will be our DataFrame
         logging.basicConfig(
             level=logging.DEBUG,
@@ -43,43 +44,28 @@ class App:
     def run(self):
         logging.info(f"Running {self.args.app_name}.")
         patch_file_properties = {}
-        # Suck up all the properties from all the files
+        # Suck up all the properties from all the file
         for patch_file in self.patch_files:
-            file_properties = self.get_properties(patch_file)
-            patch_file_properties[patch_file.name] = pd.Series(file_properties)
+            file_parameters = PatchParameters(patch_file)
+            patch_file_properties[patch_file.name] = pd.Series(file_parameters.properties)
         # Put it all in a DF for processing
         self.df = pd.DataFrame(patch_file_properties)
-        # Sort the columns by file name, including the "default"
-        self.df.sort_index(axis=1, inplace=True)
+        self.df.sort_index()
+        self.dump()
         # Dump to CSV
-        self.df.to_csv("props.csv")
+        # Sort the columns by file name, including the "default"
+        # self.df.sort_index(axis=1, inplace=True)
+        # self.df.to_csv("props.csv")
         pass
+
+    def dump(self):
+        for name, parameters in self.df.items():
+            print(f"----------------- {name} ---------------")
+            for p, v in parameters.items():
+                print(p, v["DISPLAY_VALUE"])
 
     def cleanup(self):
         print(f"Cleaning up {self.args.app_name}.")
-
-    def get_properties(self, filepath):
-        properties = {}
-        if filepath != "":
-            prop_file = open(filepath, "r")
-            lines = prop_file.read().split("\n")
-            for ln in (f for f in lines if f):
-                if not ln.startswith("STEP_"):
-                    eqind = ln.index("=")
-                    prop = ln[:eqind]
-                    prop = prop.strip()
-                    val = ln[eqind + 1 :]
-                    val = val.strip()
-                    properties[prop] = val
-        return properties
-
-
-class Parameters:
-    def __init__(self, app_args):
-        self.df = None  # Will be our DataFrame
-
-    def definition(self):
-        pass
 
 
 def parse_app_args(raw_args):
