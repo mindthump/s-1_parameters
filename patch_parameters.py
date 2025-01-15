@@ -24,7 +24,7 @@ class PatchParameters:
             if line and not line.startswith("STEP_"):
                 eqind = line.index("=")
                 prop = line[:eqind].strip()
-                val = line[eqind + 1:].strip()
+                val = line[eqind + 1 :].strip()
                 parameter_values[prop] = val
         return parameter_values
 
