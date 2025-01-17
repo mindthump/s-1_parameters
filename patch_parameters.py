@@ -246,7 +246,7 @@ class PatchParameters:
         # This depends on LFO_SYNC. How do we represent a RANGE vs a DICT?
         "LFO_RATE": {
             "NAME": "LFO Rate",
-            "LOCATION": "LFO (LFO)",
+            "LOCATION": "LFO (RATE)",
             "TYPE": "DICT",
             "VALUES": {
                 "0": "8_1",
@@ -320,7 +320,7 @@ class PatchParameters:
         },
         "VCO_PULSE_WIDTH": {
             "NAME": "Oscillator Pulse Width / Mod Depth",
-            "LOCATION": "[PWM DEPTH]",
+            "LOCATION": "[PWM DEPTH], ⬆︎OSC (╚╔╝╗)",
             "TYPE": "INT",
             "RANGE": (0, 255),
             "DEFAULT": "0",

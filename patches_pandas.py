@@ -8,7 +8,6 @@ import sys
 import argparse
 import logging
 from pathlib import Path
-
 import pandas as pd
 from patch_parameters import PatchParameters as pp
 
@@ -16,7 +15,7 @@ from patch_parameters import PatchParameters as pp
 class App:
     def __init__(self, app_args):
         self.args = app_args
-        self.patch_dir = "/Users/ed/Music/s1_patch_analysis"
+        self.patch_dir = self.args.file_dir
         self.patch_files: list[Path] = []
         self.values_df = pd.DataFrame()  # Raw values
         self.display_df = pd.DataFrame()  # Readable values
@@ -40,11 +39,14 @@ class App:
 
     def prepare(self):
         print(f"Preparing {self.args.app_name}.")
-        self.patch_files = [
-            patch_file
-            for patch_file in Path(self.patch_dir).iterdir()
-            if patch_file.is_file() and not patch_file.name.startswith(".")
-        ]
+        if self.args.patch_file:
+            self.patch_files = [Path(self.patch_dir, file) for file in self.args.patch_file]
+        else:
+            self.patch_files = [
+                patch_file
+                for patch_file in Path(self.patch_dir).iterdir()
+                if patch_file.is_file() and not patch_file.name.startswith(".")
+            ]
 
     def run(self):
         logging.info(f"Running {self.args.app_name}.")
@@ -59,7 +61,7 @@ class App:
         # DF: rows = params, cols = files
         self.values_df = pd.DataFrame(
             {
-                patch_file.name: pp.get_parameter_values_from_file(patch_file)
+                patch_file.stem: pp.get_parameter_values_from_file(patch_file)
                 for patch_file in self.patch_files
             }
         )
@@ -110,10 +112,10 @@ class App:
             display = {}
             for param, value in parameters.items():
                 display[param] = value
-            csv_params[patch_name] = pd.Series(display, name=param)
+            csv_params[patch_name] = pd.Series(display)
         csv_df = pd.DataFrame(csv_params)
         csv_df.drop("TYPE", axis=1, inplace=True)
-        csv_df.to_csv(self.args.csvname, index=False)
+        csv_df.to_csv(self.args.csvname, index=False, index_label="Parameter")
         pass
 
     def dump(self):
@@ -126,7 +128,7 @@ class App:
             print(f"\n----------------- {patch_name} ---------------")
             for p, v in parameters.items():
                 if not pd.isna(v):
-                    print(f'{self.param_attributes["NAME"][p]}: {v}')
+                    print(f'{self.param_attributes["NAME"][p]} ={self.param_attributes["LOCATION"][p]}= : {v}')
 
     def cleanup(self):
         print(f"Cleaning up {self.args.app_name}.")
@@ -143,10 +145,23 @@ def parse_app_args(raw_args):
     )
     parser.add_argument(
         "--default",
-        "-d",
+        "-k",
         help="Include values that match default value",
         action="store_true",
         default=False,
+    )
+    parser.add_argument(
+        "--file_dir",
+        "-d",
+        help="Evaluate only specified files",
+        action="store",
+        default="/Users/ed/Music/BACKUP"
+    )
+    parser.add_argument(
+        "--patch_file",
+        "-p",
+        help="Evaluate only specified files",
+        action="append",
     )
     parser.add_argument("--csvname", "-c", default="patches.csv")
     return parser.parse_args()
