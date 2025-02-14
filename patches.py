@@ -17,6 +17,7 @@ class App:
         self.args = app_args
         self.patch_dir = self.args.file_dir
         self.patch_files: list[Path] = []
+        import pandas as pd
         self.values_df = pd.DataFrame()  # Raw values
         self.display_df = pd.DataFrame()  # Readable values
         self.param_attributes = (

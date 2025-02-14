@@ -2,7 +2,6 @@ import logging
 import math
 from pathlib import Path
 import re
-import pandas as pd
 
 
 class PatchParameters:
@@ -97,7 +96,8 @@ class PatchParameters:
             case "DICT":
                 try:
                     display_value = param_def["VALUES"][value]
-                except:
+                except KeyError:
+                    # TODO: LFO_RATE depends on LFO_SYNC. Since it could occur before or after, we would need to wait until the end.
                     display_value = value
             case "DIV100":
                 display_value = int(value) / 100
