@@ -108,6 +108,8 @@ class PatchParameters:
             case "COMB":
                 # Eights, rounded up
                 display_value = math.ceil((int(value) / 8) * 10) / 10
+            case "MULT":
+                display_value = round((int(value)+1) / 8, 1)
             case _:
                 display_value = f"Type: {param_def["TYPE"]} Value: {value}"
         return display_value
@@ -136,7 +138,7 @@ class PatchParameters:
         },
         "TRANSPOSE": {
             "NAME": "Key Transpose",
-            "LOCATION": "⬆︎[STEP]",
+            "LOCATION": "{trAn}, ⬆︎[STEP]",
             "TYPE": "INT",
             "RANGE": (-60, 60),
             "DEFAULT": 0,
@@ -320,7 +322,7 @@ class PatchParameters:
         },
         "VCO_PULSE_WIDTH": {
             "NAME": "Oscillator Pulse Width / Mod Depth",
-            "LOCATION": "[PWM DEPTH], ⬆︎OSC (╚╔╝╗)",
+            "LOCATION": "[PWM DEPTH]",
             "TYPE": "INT",
             "RANGE": (0, 255),
             "DEFAULT": "0",
@@ -397,7 +399,7 @@ class PatchParameters:
         },
         "VCF_KEY_FOLLOW": {
             "NAME": "Filter Keyboard Follow",
-            "LOCATION": "[KYBD]",
+            "LOCATION": "[FILTER KYBD]",
             "TYPE": "INT",
             "RANGE": (0, 255),
             "DEFAULT": 0,
@@ -446,8 +448,9 @@ class PatchParameters:
         },
         "ASSIGN_MODE": {
             "NAME": "Assign Mode",
-            "LOCATION": "",
-            "TYPE": "UNK",
+            "LOCATION": "[POLY]",
+            "TYPE": "DICT",
+            "VALUES": {"0": "Mono", "1": "Unison", "2": "Poly", "3": "Chord"},
             "DEFAULT": "2",
         },  # ???
         "CHORD_VOICE2_SW": {
@@ -766,16 +769,16 @@ class PatchParameters:
             "NAME": "Oscillator Draw Switch",
             "LOCATION": "[DRAW] {SW}",
             "TYPE": "DICT",
-            "VALUES": {"0": "Off", "1": "Step", 2: "Slope"},
+            "VALUES": {"0": "Off", "1": "Step", "2": "Slope"},
             "DEFAULT": "0",
         },
         "OSC_DRAW_MULT": {
             "NAME": "Oscillator Draw Multiplier",
-            "LOCATION": "[DRAW] {MULt}",
-            "TYPE": "INT",
+            "LOCATION": "[DRAW] {MULt}, ⬆︎OSC (╚╔╝╗)",
+            "TYPE": "MULT",
             "RANGE": (0, 255),
-            "DEFAULT": 7,
-        },  # Encoding?
+            "DEFAULT": 1, # 1
+        },  # (N+1)/8
         # Oscillator Draw Pads SPLIT_TC: Binary representation split in 2 halves,
         # then "Two's Complement" each into an integer (with _higher_ index first)
         "OSC_DRAW_P1": {
@@ -921,14 +924,14 @@ class PatchParameters:
         },
         "RISER_RESO": {
             "NAME": "Riser Resonance",
-            "LOCATION": "rS.rS",
+            "LOCATION": "{rS.rS}",
             "TYPE": "INT",
             "RANGE": (0, 100),
             "DEFAULT": "50",
         },
         "RISER_LEVEL": {
             "NAME": "Riser Level",
-            "LOCATION": "rS.Lv",
+            "LOCATION": "{rS.Lv",
             "TYPE": "INT",
             "RANGE": (0, 100),
             "DEFAULT": "70",
@@ -981,14 +984,14 @@ class PatchParameters:
         },
         "DM_SENS_X": {
             "NAME": "D-Motion Roll Sensitivity",
-            "LOCATION": "r.SnS",
+            "LOCATION": "{r.SnS}",
             "TYPE": "INT",
             "RANGE": (0, 65535),
             "DEFAULT": "5",
         },
         "DM_SENS_Y": {
             "NAME": "D-Motion Pitch Sensitivity",
-            "LOCATION": "P.SnS",
+            "LOCATION": "{P.SnS}",
             "TYPE": "INT",
             "RANGE": (0, 65535),
             "DEFAULT": "5",
@@ -1026,3 +1029,29 @@ class PatchParameters:
         "PRM10": {"NAME": "PRM 10", "LOCATION": "", "TYPE": "UNK", "DEFAULT": "0"},
         "PRM11": {"NAME": "PRM 11", "LOCATION": "", "TYPE": "UNK", "DEFAULT": "0"},
     }
+
+### Global/Command Menu Options:
+# M.Prb = Master Probability
+# n.Pri = Note Priority
+# GL.d.r = Global Delay/Reverb Switch
+# D.L.Md = Delay Level Mode
+# S.cLk = Sync Clock (sync clocks per beat)
+# CH = MIDI Channel
+# SYnC = MIDI Clock Sync
+# thrU = MIDI Thru
+# tHPc = Tx Program Change
+# rHPc = Rx Program Change
+# Pc.Ch = Program Change Channel
+# vELo = Key Velocity
+# tUnE = Master Tune
+# USb.d = USB Direct Out Volume
+# A.Lnk = AIRA Link
+# Cnt.I = Count In
+# Mtro = Metronome
+# Mtr.L = Metronome Level
+# D.Lat = D-MOTION Latch
+# COPY = Pattern Copy
+# init = Pattern Initialize
+# rLod = Reload All
+# rL.Sd = Reload Sound
+# rL.Sq = Reload Sequence

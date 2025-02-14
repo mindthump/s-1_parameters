@@ -155,7 +155,7 @@ def parse_app_args(raw_args):
         "-d",
         help="Evaluate only specified files",
         action="store",
-        default="/Users/ed/Music/BACKUP"
+        default="/Users/ed/Music/S-1 Patches - All Factory + UPV 1+2"
     )
     parser.add_argument(
         "--patch_file",
